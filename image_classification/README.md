@@ -1,0 +1,41 @@
+## MultiLayer Perceptron (MLP)
+- [keras.layers.InputLayer](https://www.tensorflow.org/api_docs/python/tf/keras/layers/InputLayer): 
+	- 它是 Keras 中的一個層（Layer），用於指定模型的輸入形狀。你可以將 InputLayer 添加到模型的開始，以定義模型的輸入
+	- 和 keras.Input 類似，都是 Keras 中用於定義模型輸入的方式
+- [keras.Input](https://www.tensorflow.org/api_docs/python/tf/keras/Input): 
+	- 它是 Keras 中的一個輸入張量（Tensor），用於在模型建立過程中定義模型的輸入。你可以將 Input 作為函數調用，並傳遞輸入形狀和其他相關參數，以創建輸入張量
+- 如果建立模型時沒有宣告Sequential()，那在最後儲存時就不能存成.h5檔
+- [callbacks-EarlyStopping](https://www.tensorflow.org/api_docs/python/tf/keras/callbacks/EarlyStopping):
+	- `monitor`: 想要監控的指標，當我們要看的是訓練集上的loss便可設定為'loss'，當loss不再降低的時候就停止
+    - `mode`: 想要monitor停在最大值(max)還是最小值(min)，用auto最方便
+    - `min_delta`: 在設定的`patience`內，`monitor`指標的變化都小於min_delta，則認為不再上升或下降便停止訓練
+    - `patience`: 在設定的epoch數內，不發生變化便停止訓練
+    - `verbose`: 可設為0/1/2，依照不同數字，輸出epoch訓練的情形
+- [callbacks-ModelCheckpoint](https://www.tensorflow.org/api_docs/python/tf/keras/callbacks/ModelCheckpoint):
+	- `filepath`: 模型儲存的路徑
+	- `monitor`: 想要監控的指標
+    - `mode`: 想要monitor停在最大值(max)還是最小值(min)
+	- `save_bset_only`: 是否只儲存最佳模型，建議設為True
+    - `verbose`: 可設為0/1/2，依照不同數字，輸出epoch訓練的情形
+- [callbacks-CSVLogger](https://www.tensorflow.org/api_docs/python/tf/keras/callbacks/CSVLogger):
+	- `filename`: 數據記錄到的文件名稱
+	- `separator`: 數據分隔符號
+	- `append`: 設為False的話表示每次訓練時都創建一個新的文件，而不是追加到現有文件中
+- [layers-Dropout](https://www.tensorflow.org/api_docs/python/tf/keras/layers/Dropout):
+	- `seed`: 輸入數字便可以固定每次 Dropout 的隨機方式
+	- `training`: 用於控制 Dropout 層在訓練和預測(測試)階段的行為 
+		- **training = True**: Dropout 層將在訓練階段隨機丟棄一部分神經元的輸出。這有助於減少過擬合現象，增加模型的泛化能力。
+		- **training = False**: `EX: model.get_layer('dropout').training = False`， Dropout 層將保留所有神經元的輸出，並不會隨機丟棄任何神經元。 這是因為在測試階段，我們希望使用完整的模型進行預測，而不希望任何神經元被丟棄。因此training=False可以確保 Dropout 層在測試階段的行為是固定的，並獲得一致的預測結果。
+		
+## Convolutional Neural Network (CNN)
+- [layers-BatchNormalization](https://www.tensorflow.org/api_docs/python/tf/keras/layers/BatchNormalization):
+	- 在使用 BatchNormalization 層時，通常不需要特別設置其內部的參數，但在使用分佈式訓練或多 GPU 訓練時，才需要設置 `synchronized=True` 以進行同步計算。
+	- 在CNN中，BatchNormalization通常被應用在卷積層之後，並且在激活函數之前。
+		- 當BatchNormalization放置在每個MaxPooling2D之前(即放置在卷積層之後)時，它可以在每個卷積層的輸出上進行標準化。 這可以幫助加速訓練過程，減少內部協變量偏移的影響，並有助於網絡的收斂。此外，由於BatchNormalization應用在卷積層之後，每個卷積層的輸出也更加穩定和一致。
+		- 將BatchNormalization放置在每個MaxPooling2D之後(即放置在卷積層之前)，它將在每個池化層的輸出上進行標準化。 這可能會導致模型對輸出的細微變化更加敏感，因為每個池化層的輸出可能會有較大的變動範圍。這種情況下，模型可能需要更多的訓練才能適應這些變化。
+	- `training`: 
+		- **training = True**: BatchNormalization 的 training 參數默認為 True，這表示該層將根據每個批次的統計數據進行正規化處理。
+		- **training = False**: 在預測階段，需要將 BatchNormalization 的 training 參數設置為 False。 可以確保 BatchNormalization 使用訓練過程中計算得到的移動平均數和移動方差進行正規化，而不是根據輸入得批次(batch)計算。
+- [訓練資料集下載連結](https://www.kaggle.com/c/dogs-vs-cats/data) 
+- 資料量大的情況下，加深隱藏層可以有效提升分類性能。
+- 將圖像從0~255標準化至0~1是為了加快訓練速度，方便收斂。
