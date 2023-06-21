@@ -38,4 +38,4 @@
 		- **training = False**: 在預測階段，需要將 BatchNormalization 的 training 參數設置為 False。 可以確保 BatchNormalization 使用訓練過程中計算得到的移動平均數和移動方差進行正規化，而不是根據輸入得批次(batch)計算。
 - [訓練資料集下載連結](https://www.kaggle.com/c/dogs-vs-cats/data) 
 - 資料量大的情況下，加深隱藏層可以有效提升分類性能。
-- 將圖像從0~255標準化至0~1是為了加快訓練速度，方便收斂。
+- 將圖像從`0~255`標準化至`0~1`是為了加快訓練速度，方便收斂。
